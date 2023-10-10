@@ -8,7 +8,6 @@ import java.security.Key;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 public class UserRegistrationApp {
@@ -18,7 +17,7 @@ public class UserRegistrationApp {
     private static String password;
     private static String dob;
 
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
+    public static void main(String[] args){
         Scanner scanner = new Scanner(System.in);
 
         System.out.print("Enter your username: ");
@@ -30,7 +29,7 @@ public class UserRegistrationApp {
         System.out.print("Enter your password (must have at least 1 upper case, 1 special character e.g @#$%^&*, 1 number and must be minimum of 8 characters: ");
         password = scanner.nextLine();
 
-        System.out.print("Enter your DOB (example: 1980-12-02, you must be 16 years old or older) : ");
+        System.out.print("Enter your DOB (example: 1980-12-22, you must be 16 years old or older) : ");
         dob = scanner.nextLine();
 
         scanner.close();
@@ -48,7 +47,7 @@ public class UserRegistrationApp {
                 String jwtToken = createToken(username);
                 System.out.println("JWT Token: " + jwtToken);
 
-                String result = Objects.equals(verifyJWT(jwtToken), username)?"verification passed":"verification failed";
+                String result = Objects.equals(verifyJWT(jwtToken), username)?"verification pass":"verification fails";
                 System.out.println("Verification result: " + result);
             } else {
                 System.out.println("Validation failed:");
