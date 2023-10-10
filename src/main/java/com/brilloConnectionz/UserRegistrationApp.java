@@ -1,15 +1,10 @@
 package com.brilloConnectionz;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
 import jakarta.xml.bind.DatatypeConverter;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -53,7 +48,7 @@ public class UserRegistrationApp {
                 String jwtToken = createToken(username);
                 System.out.println("JWT Token: " + jwtToken);
 
-                String result = verifyJWT(jwtToken, username);
+                String result = Objects.equals(verifyJWT(jwtToken), username)?"verification passed":"verification failed";
                 System.out.println("Verification result: " + result);
             } else {
                 System.out.println("Validation failed:");
@@ -88,10 +83,10 @@ public class UserRegistrationApp {
 
 
     private static boolean validatePassword(String password) {
-        if (password == null || password.length() < 8) {
+        if (password == null || password.length() < 8 ) {
             return false;
         }
-        return password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).*$");
+        return Pattern.compile("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-.]).{8,}$").matcher(password).matches();
     }
 
     private static boolean validateDateOfBirth(String dob) {
@@ -110,7 +105,7 @@ public class UserRegistrationApp {
         byte[] secretKeyInBytes = DatatypeConverter.parseBase64Binary(generateSecret());
         return new SecretKeySpec(secretKeyInBytes, "HmacSHA512");
     }
-    private static String createToken(String subject){
+    static String createToken(String subject){
         Map<String, Object> claims = new HashMap<>();
         claims.put("User", subject);
         return Jwts.builder()
@@ -132,9 +127,8 @@ public class UserRegistrationApp {
                 .parseClaimsJws(token)
                 .getBody();
     }
-    private static String verifyJWT(String jwtToken, String username) {
-        return Objects.equals(extractUsername(jwtToken), username) ? "verification pass" :
-                "verification fails";
+    static String verifyJWT(String jwtToken) {
+        return extractUsername(jwtToken);
     }
 
 }
